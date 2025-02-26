@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: n8n-ingress
+  namespace: n8n
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt"  # 🔹 Link to the ClusterIssuer
+spec:
+  tls:
+  - hosts:
+    - workflows.hoppa.ai
+    secretName: workflows-ssl  # 🔹 cert-manager will store the SSL cert in this secret
+  rules:
+  - host: workflows.hoppa.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: n8n
+            port:
+              number: 5678
